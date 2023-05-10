@@ -1,0 +1,33 @@
+import matplotlib.pyplot as plt
+import numpy as np
+from sklearn.metrics import r2_score, mean_squared_error
+
+# Define the empirical model
+def calculate_ccs_cost(c_capture, c_storage, v_credit):
+    return c_capture + c_storage - v_credit
+
+# Define the real-world data
+c_capture_data = [50, 60, 55, 65, 70, 45, 50, 60, 55, 65] # cost of capturing CO2 (₹/ton)
+c_storage_data = [20, 25, 30, 35, 40, 20, 25, 30, 35, 40] # cost of storing CO2 (₹/ton)
+v_credit_data = [10, 15, 20, 25, 30, 10, 15, 20, 25, 30] # value of CO2 credits (₹/ton)
+ccs_cost_data = [80, 90, 65, 105, 100, 40, 60, 70, 65, 95] # net cost of CCS project (₹/ton)
+
+# Calculate the predicted net cost of the CCS projects using the empirical model
+ccs_cost_predicted = []
+for i in range(len(c_capture_data)):
+    ccs_cost_predicted.append(calculate_ccs_cost(c_capture_data[i], c_storage_data[i], v_credit_data[i]))
+
+# Evaluate the accuracy of the model using R-squared and RMSE
+r_squared = r2_score(ccs_cost_data, ccs_cost_predicted)
+rmse = mean_squared_error(ccs_cost_data, ccs_cost_predicted, squared=False)
+
+print("R-squared: ", r_squared)
+print("RMSE: ", rmse)
+
+# Visualize the results
+plt.scatter(ccs_cost_data, ccs_cost_predicted)
+plt.plot([min(ccs_cost_data), max(ccs_cost_data)], [min(ccs_cost_data), max(ccs_cost_data)], '--', color='red')
+plt.xlabel('Actual Net Cost of CCS Project (₹/ton)')
+plt.ylabel('Predicted Net Cost of CCS Project (₹/ton)')
+plt.title('Actual vs Predicted Net Cost of CCS Projects')
+plt.show()
